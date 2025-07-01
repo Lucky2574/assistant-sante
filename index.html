@@ -164,12 +164,38 @@
 }
 
 /* Responsive pour mobile */
-@media (max-width: 640px) {
-    .chat-container {
-        width: calc(100vw - 2rem);
-        height: calc(100vh - 8rem);
-        right: 1rem;
-        bottom: 5rem;
+/* Correction responsive pour mobile */
+@media (max-width: 768px) {
+    .chat-container,
+    .chat-container-mobile {
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        right: 0 !important;
+        bottom: 0 !important;
+        width: 100vw !important;
+        height: 100dvh !important; /* Utilise 100dvh pour prendre en compte la hauteur dynamique sur mobile */
+        max-height: 100dvh !important;
+        border-radius: 0 !important;
+        z-index: 9999 !important;
+        transform-origin: center !important;
+        background: #fff;
+        display: flex;
+        flex-direction: column;
+    }
+    .chat-container-mobile .chatbot-iframe,
+    .chat-container .chatbot-iframe {
+        border-radius: 0 !important;
+        width: 100vw !important;
+        height: 100% !important;
+        min-height: 0 !important;
+        max-height: 100% !important;
+        display: block;
+    }
+    /* Pour éviter que le bouton d'ouverture ne masque le bas du chat */
+    #chatWidget {
+        right: 1rem !important;
+        bottom: 1rem !important;
     }
 }
     </style>
@@ -558,9 +584,9 @@
             
             <!-- Zone de chat - Iframe Chatbase -->
             <div class="flex-1 min-h-0">
-                <iframe 
+               <iframe 
                     src="https://www.chatbase.co/chatbot-iframe/OaZaHcqPYET_rWUAZyWLX" 
-                    class="w-full h-full border-0"
+                    class="chatbot-iframe"
                     title="Assistant Santé Burundi"
                     allow="microphone; camera">
                 </iframe>
@@ -570,6 +596,23 @@
 
     <!-- Scripts -->
     <script>
+
+                function setChatbotHeight() {
+            const container = document.getElementById('chatContainer');
+            if (window.innerWidth <= 768) {
+                // Utilise la hauteur dynamique du viewport (100dvh)
+                container.style.height = window.visualViewport
+                    ? window.visualViewport.height + 'px'
+                    : window.innerHeight + 'px';
+            } else {
+                container.style.height = '';
+            }
+        }
+        window.addEventListener('resize', setChatbotHeight);
+        window.addEventListener('orientationchange', setChatbotHeight);
+        document.getElementById('chatButton').addEventListener('click', function() {
+            setTimeout(setChatbotHeight, 100); // Donne le temps à l'animation d'ouvrir le chat
+        });
         // Widget de chat personnalisé
         const widget = {
             isOpen: false,
